@@ -1,7 +1,7 @@
 {
   "name": "postcss-copy-assets",
   "version": "0.0.1",
-  "description": "PostCSS plugin copies assets referenced by relative url() declarations to a build directory.",
+  "description": "PostCSS plugin to copy assets referenced by relative url()s into a build directory.",
   "keywords": [
     "postcss",
     "css",
@@ -10,11 +10,11 @@
   ],
   "author": "Alex McHardy <amchardy@shutterstock.com>",
   "license": "MIT",
-  "repository": "https://github.shuttercorp.net/web-platform/postcss-copy-assets",
+  "repository": "https://github.com/shutterstock/postcss-copy-assets",
   "bugs": {
-    "url": "https://github.shuttercorp.net/web-platform/postcss-copy-assets/issues"
+    "url": "https://github.com/shutterstock/postcss-copy-assets/issues"
   },
-  "homepage": "https://github.shuttercorp.net/web-platform/postcss-copy-assets",
+  "homepage": "https://github.com/shutterstock/postcss-copy-assets",
   "dependencies": {
     "mkdirp": "^0.5.1",
     "postcss": "^5.0.2"

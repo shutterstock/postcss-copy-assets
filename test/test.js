@@ -21,7 +21,11 @@ var fsFixture = {
                     }
                 },
                 css: {
-                    'test1.png': '1'
+                    'test1.png': '1',
+                    fonts: {
+                        'testfont1.woff': 'woff',
+                        'testfont1.ttf': 'ttf'
+                    }
                 }
             },
             images: {
@@ -179,6 +183,13 @@ describe('postcss-copy-assets', function () {
              opts, 0, done);
     });
 
+    it('handles asset in child dir from css', function (done) {
+        test('a{ background: url("fonts/testfont1.woff") }',
+             'a{ background: url("../fonts/testfont1.woff") }',
+             ['test/dist/assets/fonts/testfont1.woff'],
+             opts, 0, done);
+    });
+
     it('handles asset in different tree from css', function (done) {
         test('a{ background: url("../images/test3.png") }',
              'a{ background: url("../images/test3.png") }',
@@ -307,6 +318,16 @@ describe('postcss-copy-assets', function () {
              'url("../images/test3.png") }',
              ['test/dist/assets/test1.png', 'test/dist/assets/test2.png',
              'test/dist/assets/images/test3.png'],
+             opts, 0, done);
+    });
+
+    it('handles font-face src declaration', function (done) {
+        test('src: url("fonts/testfont1.woff") format("woff"), ' +
+             'url("fonts/testfont1.ttf") format("truetype");',
+             'src: url("../fonts/testfont1.woff") format("woff"), ' +
+             'url("../fonts/testfont1.ttf") format("truetype");',
+             ['test/dist/assets/fonts/testfont1.woff',
+             'test/dist/assets/fonts/testfont1.ttf'],
              opts, 0, done);
     });
 
