@@ -6,12 +6,18 @@
 [ci-img]:  https://travis-ci.org/shutterstock/postcss-copy-assets.svg
 [ci]:      https://travis-ci.org/shutterstock/postcss-copy-assets
 
+## Installation
+```shell
+$ npm install postcss-copy-assets
+```
+
 ## Example
 ### Usage
 ```js
+var copyAssets = require('postcss-copy-assets');
 postcss(
     [
-        require('postcss-copy-assets')({ base: 'dist'})
+        copyAssets({ base: 'dist'})
     ],
     {
         to: 'dist/css/foo.css'
@@ -76,9 +82,10 @@ The base path where the plugin will copy images, fonts, and other assets it find
 This plugin requires the `to` option to be passed to `postcss` itself. This specifies where the transformed CSS will be written to.
 
 ```js
+var copyAssets = require('postcss-copy-assets');
 postcss(
     [
-        require('postcss-copy-assets')({ base: 'base/dir/to/copy/assets'})
+        copyAssets({ base: 'base/dir/to/copy/assets'})
     ],
     {
         to: 'path/to/transformed/file.css'
