@@ -141,11 +141,6 @@ module.exports = postcss.plugin('postcss-copy-assets', function (copyOpts) {
     copyOpts = copyOpts || {};
     return function (css, result) {
         var postCssOpts = result.opts;
-        if (!copyOpts.base) {
-            result.warn('postcss-copy-assets requires "base" option so it ' +
-                'knows where to copy assets.');
-            return;
-        }
         if (!postCssOpts.from) {
             result.warn('postcss-copy-assets requires postcss "from" option.');
             return;
@@ -153,6 +148,10 @@ module.exports = postcss.plugin('postcss-copy-assets', function (copyOpts) {
         if (!postCssOpts.to || postCssOpts.to === postCssOpts.from) {
             result.warn('postcss-copy-assets requires postcss "to" option.');
             return;
+        }
+        if (!copyOpts.base) {
+            var str = postCssOpts.to;
+            copyOpts.base = str.substring(0, str.lastIndexOf('/'));
         }
         var assetBase = path.resolve(copyOpts.base);
         css.walkDecls(function (decl) {
