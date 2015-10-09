@@ -74,7 +74,9 @@ dist/
 ### Plugin options
 
 #### `base`
-The base path where the plugin will copy images, fonts, and other assets it finds in CSS `url()` declarations. Only `url()` declarations with relative paths are processed. Each asset's sub-directory hierarchy will be maintained under the base path. Basically, sub-directories after the last `../` in the path will be kept (or the whole path if no `../` exists). For example, the image referred to by `url("../../images/icons/icon.jpg")` will be copied to `<base>/images/icons/icon.jpg`.
+Optional base path where the plugin will copy images, fonts, and other assets it finds in CSS `url()` declarations. Only `url()` declarations with relative paths are processed. Each asset's sub-directory hierarchy will be maintained under the base path. Basically, sub-directories after the last `../` in the path will be kept (or the whole path if no `../` exists). For example, the image referred to by `url("../../images/icons/icon.jpg")` will be copied to `<base>/images/icons/icon.jpg`.
+
+If `base` is not specified assets will be copied by default to the base directory given to the PostCSS `to` option while still maintaining the assets' sub-directory hierarchy.  For example, if PostCSS is told to ouput to `dist/css/foo.css` and `base` is not specified the image referred to by `url("../../images/icons/icon.jpg")` will be copied to `dist/css/images/icons/icon.jpg`.  
 
 ### PostCSS options
 

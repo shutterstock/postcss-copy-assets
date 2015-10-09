@@ -112,19 +112,19 @@ describe('postcss-copy-assets', function () {
              opts, 1, done);
     });
 
-    it('warns if no "base" option provided', function (done) {
-        delete opts.plugin;
-        test('a{ background: url("foo") }',
-             'a{ background: url("foo") }',
-             null,
-             opts, 1, done);
-    });
-
     it('warns if asset file not there', function (done) {
         test('a{ background: url("test-not-there.png") }',
              'a{ background: url("../test-not-there.png") }',
              null,
              opts, 1, done);
+    });
+
+    it('uses "to" base path if no "base" option provided', function (done) {
+        delete opts.plugin;
+        test('a{ background: url("fonts/testfont1.ttf") }',
+             'a{ background: url("fonts/testfont1.ttf") }',
+             ['test/dist/assets/css/fonts/testfont1.ttf'],
+             opts, 0, done);
     });
 
     it('ignores root-relative url()', function (done) {
