@@ -150,8 +150,7 @@ module.exports = postcss.plugin('postcss-copy-assets', function (copyOpts) {
             return;
         }
         if (!copyOpts.base) {
-            var str = postCssOpts.to;
-            copyOpts.base = str.substring(0, str.lastIndexOf('/'));
+            copyOpts.base = path.dirname(postCssOpts.to);
         }
         var assetBase = path.resolve(copyOpts.base);
         css.walkDecls(function (decl) {
