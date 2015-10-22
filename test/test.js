@@ -54,7 +54,7 @@ var test = function (input, output, outputFiles, opts, warningsCount, done) {
     postcss([ plugin(opts.plugin) ]).process(input, opts.postcss)
         .then(function (result) {
             var warnings = result.warnings();
-            expect(result.css).to.eql(output);
+            expect(result.css).to.eql(output, 'transformed css');
             if (warnings.length && warnings.length !== warningsCount) {
                 console.log(warnings.join('\n'));
             }
@@ -329,6 +329,56 @@ describe('postcss-copy-assets', function () {
              ['test/dist/assets/fonts/testfont1.woff',
              'test/dist/assets/fonts/testfont1.ttf'],
              opts, 0, done);
+    });
+
+    describe('pathTransform option', function () {
+        var cwd = process.cwd();
+
+        it('handles not a function', function (done) {
+            opts.plugin.pathTransform = 'not-a-function';
+            test('a{ background: url("test1.png") }',
+                 'a{ background: url("test1.png") }',
+                 null,
+                 opts, 1, done);
+        });
+
+        it('receives correct arguments', function (done) {
+            opts.plugin.pathTransform = function (newPath, origPath, contents) {
+                expect(newPath).to.eql(
+                    path.resolve(cwd, 'test/dist/assets/test1.png'),
+                    'newPath');
+                expect(contents.toString()).to.eql('1', 'file contents');
+                expect(origPath).to.eql(
+                    path.resolve(cwd, 'test/fixtures/src/css/test1.png'),
+                    'origPath');
+                return newPath;
+            };
+            test('a{ background: url("test1.png") }',
+                 'a{ background: url("../test1.png") }',
+                 ['test/dist/assets/test1.png'],
+                 opts, 0, done);
+        });
+
+        it('can change the filename', function (done) {
+            opts.plugin.pathTransform = function (newPath) {
+                return newPath.replace(/\./, '-abc.');
+            };
+            test('a{ background: url("test1.png") }',
+                 'a{ background: url("../test1-abc.png") }',
+                 ['test/dist/assets/test1-abc.png'],
+                 opts, 0, done);
+        });
+
+        it('can change the path', function (done) {
+            opts.plugin.pathTransform = function (newPath) {
+                var i = newPath.lastIndexOf('/');
+                return newPath.slice(0, i) + '/abc' + newPath.slice(i);
+            };
+            test('a{ background: url("test1.png") }',
+                 'a{ background: url("../abc/test1.png") }',
+                 ['test/dist/assets/abc/test1.png'],
+                 opts, 0, done);
+        });
     });
 
 });
