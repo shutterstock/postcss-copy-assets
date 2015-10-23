@@ -45,21 +45,23 @@ function getCommonBaseDir(a, b) {
  * Processes a Declaration containing 'url()'
  *
  * @param {object} decl - PostCSS Declaration
- * @param {string} assetBase - Base path to copy assets to
+ * @param {object} copyOpts - options passed to this plugin
+ * @param {string} copyOpts.base - Base path to copy assets to
+ * @param {function} copyOpts.pathTransform - user defined path transform
  * @param {object} opts - options passed to PostCSS
  * @param {object} postCssResult - PostCSS Result
  * @returns {void}
  */
-function handleUrlDecl(decl, assetBase, opts, postCssResult) {
+function handleUrlDecl(decl, copyOpts, postCssOpts, postCssResult) {
     // Replace 'url()' parts of Declaration
     decl.value = decl.value.replace(/url\((.*?)\)/g,
         function (fullMatch, urlMatch) {
             // Example:
             //   decl.value = 'background: url("../../images/foo.png?a=123");'
-            //   urlMatch   = '"../../images/foo.png?a=123"'
-            //   assetBase  = 'dist/assets'
-            //   opts.from  = 'src/css/page/home.css'
-            //   opts.to    = 'dist/assets/css/home.min.css'
+            //   urlMatch         = '"../../images/foo.png?a=123"'
+            //   copyOpts.base    = 'dist/assets'
+            //   postCssOpts.from = 'src/css/page/home.css'
+            //   postCssOpts.to   = 'dist/assets/css/home.min.css'
 
             // "../../images/foo.png?a=123" -> ../../images/foo.png?a=123
             urlMatch = trimUrlValue(urlMatch);
@@ -73,9 +75,9 @@ function handleUrlDecl(decl, assetBase, opts, postCssResult) {
             }
 
             // '/path/to/project/src/css/page/'
-            var cssFromDirAbs = path.dirname(path.resolve(opts.from));
+            var cssFromDirAbs = path.dirname(path.resolve(postCssOpts.from));
             // '/path/to/project/dist/assets/css/page/'
-            var cssToDir = path.dirname(opts.to);
+            var cssToDir = path.dirname(postCssOpts.to);
             // parsed.pathname = '../../images/foo.png'
             var assetUrlParsed = url.parse(urlMatch);
             // '/path/to/project/src/images/foo.png'
@@ -91,7 +93,28 @@ function handleUrlDecl(decl, assetBase, opts, postCssResult) {
             // 'images'
             var assetPathPart = path.relative(fromBaseDirAbs, assetFromDirAbs);
             // '/path/to/project/dist/assets/images'
-            var newAssetPath = path.join(assetBase, assetPathPart);
+            var newAssetPath = path.join(copyOpts.base, assetPathPart);
+            // '/path/to/project/dist/assets/images/foo.png'
+            var newAssetFile = path.join(newAssetPath, assetBasename);
+
+            // Read the original file
+            var contents = null;
+            try {
+                contents = fs.readFileSync(assetFromAbs);
+            } catch(e) {
+                postCssResult.warn('Can\'t read asset file "' +
+                    assetFromAbs + '". Ignoring.', { node: decl });
+                contents = null;
+            }
+
+            // Call user-defined function
+            if (copyOpts.pathTransform) {
+                newAssetFile = copyOpts.pathTransform(newAssetFile,
+                    assetFromAbs, contents);
+                newAssetPath = path.dirname(newAssetFile);
+                assetBasename = path.basename(newAssetFile);
+            }
+
             // 'foo.png?a=123'
             var urlBasename = assetBasename +
                 (assetUrlParsed.search ? assetUrlParsed.search : '') +
@@ -101,13 +124,8 @@ function handleUrlDecl(decl, assetBase, opts, postCssResult) {
                 path.join(path.relative(cssToDir, newAssetPath), urlBasename) +
                 '")';
 
-            // Read the original file
-            var contents;
-            try {
-                contents = fs.readFileSync(assetFromAbs);
-            } catch(e) {
-                postCssResult.warn('Can\'t read asset file "' +
-                    assetFromAbs + '". Ignoring.', { node: decl });
+            // Return early with new url() string if original file is unreadable
+            if (contents === null) {
                 return newUrl;
             }
 
@@ -120,10 +138,8 @@ function handleUrlDecl(decl, assetBase, opts, postCssResult) {
                 return newUrl;
             }
 
-            // '/path/to/project/dist/assets/images/foo.png'
-            var newAssetFile = path.join(newAssetPath, assetBasename);
             try {
-                // Write new asset file to assetBase
+                // Write new asset file into base dir
                 fs.writeFileSync(newAssetFile, contents);
             } catch(e) {
                 postCssResult.warn('Can\'t write new asset file "' +
@@ -149,13 +165,19 @@ module.exports = postcss.plugin('postcss-copy-assets', function (copyOpts) {
             result.warn('postcss-copy-assets requires postcss "to" option.');
             return;
         }
+        if (copyOpts.pathTransform &&
+            typeof copyOpts.pathTransform !== 'function') {
+            result.warn('postcss-copy-assets "pathTransform" option ' +
+                'must be a function.');
+            return;
+        }
         if (!copyOpts.base) {
             copyOpts.base = path.dirname(postCssOpts.to);
         }
-        var assetBase = path.resolve(copyOpts.base);
+        copyOpts.base = path.resolve(copyOpts.base);
         css.walkDecls(function (decl) {
             if (decl.value && decl.value.indexOf('url(') > -1) {
-                handleUrlDecl(decl, assetBase, postCssOpts, result);
+                handleUrlDecl(decl, copyOpts, postCssOpts, result);
             }
         });
     };

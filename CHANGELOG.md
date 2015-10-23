@@ -1,3 +1,7 @@
+### [0.3.0] - 2015-10-23
+#### Added
+- "pathTransform" option
+
 ### [0.2.0] - 2015-10-12
 #### Changed
 - "base" option now optional, defaults to PostCSS "to" option
