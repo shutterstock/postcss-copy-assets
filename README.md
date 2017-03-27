@@ -1,10 +1,12 @@
-# PostCSS Copy Assets [![Build Status][ci-img]][ci]
+# PostCSS Copy Assets [![Build Status][travis-img]][travis] [![Windows Build Status][appveyor-img]][appveyor]
 
 [PostCSS] plugin to copy assets referenced by relative `url()`s into a build directory, while keeping their sub-directory hierarchy.
 
 [PostCSS]: https://github.com/postcss/postcss
-[ci-img]:  https://travis-ci.org/shutterstock/postcss-copy-assets.svg
-[ci]:      https://travis-ci.org/shutterstock/postcss-copy-assets
+[travis-img]:  https://travis-ci.org/shutterstock/postcss-copy-assets.svg
+[travis]:      https://travis-ci.org/shutterstock/postcss-copy-assets
+[appveyor-img]:  https://ci.appveyor.com/api/projects/status/vmhvh3cwv0v0wcbg/branch/master?svg=true
+[appveyor]:      https://ci.appveyor.com/project/alexmchardy/postcss-copy-assets-dgts6/branch/master
 
 ## Installation
 ```shell
