@@ -11,24 +11,24 @@ var fsFixture = {
     test: {
         fixtures: {
             'test5.png': '5',
-            src: {
+            'src': {
                 'test2.png': '2',
-                images: {
+                'images': {
                     'test3.png': '3',
-                    logos: {
+                    'logos': {
                         'test4.png': '4',
                         'test6.png': '6'
                     }
                 },
-                css: {
+                'css': {
                     'test1.png': '1',
-                    fonts: {
+                    'fonts': {
                         'testfont1.woff': 'woff',
                         'testfont1.ttf': 'ttf'
                     }
                 }
             },
-            images: {
+            'images': {
                 'test6.png': '6'
             }
         }
@@ -313,22 +313,27 @@ describe('postcss-copy-assets', function () {
 
     it('handles multiple url()s in same declaration', function (done) {
         test('a{ background: url("test1.png") url( \'../test2.png \'  ) ' +
-             'url(../images/test3.png) }',
-             'a{ background: url("../test1.png") url("../test2.png") ' +
-             'url("../images/test3.png") }',
-             ['test/dist/assets/test1.png', 'test/dist/assets/test2.png',
-             'test/dist/assets/images/test3.png'],
-             opts, 0, done);
+            'url(../images/test3.png) }',
+            'a{ background: url("../test1.png") url("../test2.png") ' +
+            'url("../images/test3.png") }',
+            [
+                'test/dist/assets/test1.png',
+                'test/dist/assets/test2.png',
+                'test/dist/assets/images/test3.png'
+            ],
+            opts, 0, done);
     });
 
     it('handles font-face src declaration', function (done) {
         test('src: url("fonts/testfont1.woff") format("woff"), ' +
-             'url("fonts/testfont1.ttf") format("truetype");',
-             'src: url("../fonts/testfont1.woff") format("woff"), ' +
-             'url("../fonts/testfont1.ttf") format("truetype");',
-             ['test/dist/assets/fonts/testfont1.woff',
-             'test/dist/assets/fonts/testfont1.ttf'],
-             opts, 0, done);
+            'url("fonts/testfont1.ttf") format("truetype");',
+            'src: url("../fonts/testfont1.woff") format("woff"), ' +
+            'url("../fonts/testfont1.ttf") format("truetype");',
+            [
+                'test/dist/assets/fonts/testfont1.woff',
+                'test/dist/assets/fonts/testfont1.ttf'
+            ],
+            opts, 0, done);
     });
 
     describe('pathTransform option', function () {
