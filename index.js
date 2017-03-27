@@ -101,7 +101,7 @@ function handleUrlDecl(decl, copyOpts, postCssOpts, postCssResult) {
             var contents = null;
             try {
                 contents = fs.readFileSync(assetFromAbs);
-            } catch(e) {
+            } catch (e) {
                 postCssResult.warn('Can\'t read asset file "' +
                     assetFromAbs + '". Ignoring.', { node: decl });
                 contents = null;
@@ -132,7 +132,7 @@ function handleUrlDecl(decl, copyOpts, postCssOpts, postCssResult) {
             // Create any new directories
             try {
                 mkdirp.sync(newAssetPath);
-            } catch(e) {
+            } catch (e) {
                 postCssResult.warn('Can\'t create new asset dir "' +
                     newAssetPath + '". Ignoring.', { node: decl });
                 return newUrl;
@@ -141,7 +141,7 @@ function handleUrlDecl(decl, copyOpts, postCssOpts, postCssResult) {
             try {
                 // Write new asset file into base dir
                 fs.writeFileSync(newAssetFile, contents);
-            } catch(e) {
+            } catch (e) {
                 postCssResult.warn('Can\'t write new asset file "' +
                     newAssetFile + '". Ignoring.', { node: decl });
                 return newUrl;
