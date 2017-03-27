@@ -376,8 +376,8 @@ describe('postcss-copy-assets', function () {
 
         it('can change the path', function (done) {
             opts.plugin.pathTransform = function (newPath) {
-                var i = newPath.lastIndexOf('/');
-                return newPath.slice(0, i) + '/abc' + newPath.slice(i);
+                var i = newPath.lastIndexOf(path.sep);
+                return path.join(newPath.slice(0, i), 'abc', newPath.slice(i));
             };
             test('a{ background: url("test1.png") }',
                  'a{ background: url("../abc/test1.png") }',
