@@ -123,3 +123,7 @@ postcss(
 ```
 
 See [PostCSS] docs for examples for your environment.
+
+## License
+
+[MIT](LICENSE) © 2015 Alex McHardy <amchardy@shutterstock.com>
